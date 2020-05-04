@@ -47,7 +47,7 @@ const login = async (req, res) => {
     };
 
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: 3600 });
-    res.status(400).send({ token });
+    res.status(200).send({ token });
   }
 };
 
