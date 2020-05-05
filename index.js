@@ -15,7 +15,7 @@ app.use(cors());
 app.use('/students', studentRoutes);
 app.use('/users', userRoutes);
 
-db.sequelize.sync().then(() => {
+db.sequelize.sync({ force: false }).then(() => {
   app.listen(8000, () => {
     console.log('Server is running on port 8000 🔥🔥🔥');
   });

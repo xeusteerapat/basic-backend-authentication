@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Students from './Students';
 
 const App = () => {
+  const [isLogin, setIsLogin] = useState(false);
   return (
     <div>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -45,7 +46,7 @@ const App = () => {
         </div>
       </nav>
       <div className="container">
-        <Students />
+        <Students isLogin={isLogin} setIsLogin={setIsLogin} />
       </div>
     </div>
   );

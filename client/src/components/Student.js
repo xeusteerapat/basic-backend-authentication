@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Student = ({ id, name, age, phoneNumber }) => {
+const Student = ({ id, name, age, phoneNumber, deleteStudent, isLogin }) => {
   return (
     <>
       <tr>
@@ -12,7 +12,14 @@ const Student = ({ id, name, age, phoneNumber }) => {
           <button className="btn btn-info">Edit</button>
         </td>
         <td>
-          <button className="btn btn-danger">Delete</button>
+          {isLogin ? (
+            <button
+              className="btn btn-danger"
+              onClick={() => deleteStudent(id)}
+            >
+              Delete
+            </button>
+          ) : null}
         </td>
       </tr>
     </>

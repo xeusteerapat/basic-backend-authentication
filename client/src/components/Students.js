@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
+import axios from '../config/axios';
 import Student from './Student';
+import jwtDecode from 'jwt-decode';
+import LoginForm from './LoginForm';
 
 const py = {
   margin: '0 0 10px 0'
 };
 
-const Students = () => {
+const Students = ({ isLogin, setIsLogin }) => {
   const initialFormValue = {
     name: '',
     age: '',
@@ -15,9 +17,21 @@ const Students = () => {
 
   const [students, setStudents] = useState([]);
   const [formData, setFormData] = useState(initialFormValue);
+  const [userInfo, setUserInfo] = useState({});
+
+  useEffect(() => {
+    fetchData();
+    const token = localStorage.getItem('ACCESS_TOKEN');
+    if (token) {
+      const user = jwtDecode(token);
+      setUserInfo(user);
+      setIsLogin(true);
+    }
+    // eslint-disable-next-line
+  }, []);
 
   const fetchData = async () => {
-    const result = await axios.get('http://localhost:8000/students');
+    const result = await axios.get('/students');
     setStudents(result.data);
   };
 
@@ -39,9 +53,18 @@ const Students = () => {
       phoneNumber
     };
 
-    await axios.post('http://localhost:8000/students', body);
-    fetchData();
+    await axios.post('/students', body);
     setFormData(initialFormValue);
+    fetchData();
+  };
+
+  const deleteStudent = async (id) => {
+    const headers = {
+      Authorization: `Bearer ${localStorage.getItem('ACCESS_TOKEN')}`
+    };
+    await axios.delete(`/students/${id}`, { headers });
+    alert(`Student id ${id} has been deleted`);
+    fetchData();
   };
 
   const renderContent = () => {
@@ -52,12 +75,21 @@ const Students = () => {
         name={student.name}
         age={student.age}
         phoneNumber={student.phoneNumber}
+        deleteStudent={deleteStudent}
+        isLogin={isLogin}
+        setIsLogin={setIsLogin}
       />
     ));
   };
 
   return (
     <div>
+      <LoginForm
+        isLogin={isLogin}
+        setIsLogin={setIsLogin}
+        userInfo={userInfo}
+        setUserInfo={setUserInfo}
+      />
       <form action="" onSubmit={handleSubmit}>
         <div className="form-group row">
           <label htmlFor="name" className="col-sm-2 col-form-label">
@@ -104,13 +136,6 @@ const Students = () => {
           ADD
         </button>
       </form>
-      <button
-        type="button"
-        className="btn btn-primary btn-lg btn-block"
-        onClick={fetchData}
-      >
-        FETCH STUDENTS
-      </button>
       <table className="table table-hover">
         <thead>
           <tr>
