@@ -5,7 +5,7 @@ const { User } = require('../models');
 const { SALT_ROUND, SECRET_KEY } = require('../config/passport.config');
 
 const register = async (req, res) => {
-  const { username, password } = req.body;
+  const { name, username, password } = req.body;
 
   const user = await User.findOne({
     where: { username }
@@ -20,6 +20,7 @@ const register = async (req, res) => {
     const hashPassword = bcrypt.hashSync(password, salt);
 
     await User.create({
+      name,
       username,
       password: hashPassword
     });
@@ -43,7 +44,8 @@ const login = async (req, res) => {
     res.status(401).send({ message: 'Username or password is wrong' });
   } else {
     const payload = {
-      id: user.id
+      id: user.id,
+      name: user.name
     };
 
     const token = jwt.sign(payload, SECRET_KEY, { expiresIn: 3600 });

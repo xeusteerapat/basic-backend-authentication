@@ -15,7 +15,8 @@ passport.use(
   new JWTStrategy(options, async (payload, done) => {
     const user = await User.findOne({
       where: {
-        id: payload.id
+        id: payload.id,
+        name: user.name
       }
     });
 
